@@ -3,96 +3,59 @@
 <html>
 <head>
 <meta charset="utf-8" />
-<title></title>
+<title>My Old Kentucky Home</title>
 <link rel="stylesheet" href="style.css" type="text/css" />
 </head>
 
 <body>
 
-<h1 id="title"></h1>
+<h1 id="title">My Old Kentucky Home</h1>
 
 <video src="https://www.cs.tufts.edu/comp/20/my_old_kentucky_home.mp4" id="music_video" controls></video>
+
 <div id="lyrics"></div>
+        
+        <script>
+        ( function(win, doc) {
+            var audioPlayer = doc.getElementById("audiofile");
+            var subtitles = doc.getElementById("subtitles");
+            var syncData = [
+                  { "end": "0.15","start": "0.8","text": "The sun shines bright in My Old Kentucky Home," },
+                  {"end": "0.15","start": "0.20","text": "'Tis summer, the people are gay;" },
+                    { "end": "0.28","start": "0.20","text": "The corn-top's ripe and the meadow's in the bloom" },
+                  {"end": "0.35","start": "0.29","text": "While the birds make music all the day." },
+                    { "end": "0.42","start": "0.36","text": "The young folks roll on the little cabin floor," },
+                  {"end": "0.49","start": "0.43","text": "All merry, all happy and bright;" },
+                   { "end": "0.56","start": "0.50","text": "By 'n' by hard times comes a knocking at the door," },
+                  {"end": "0.51","start": "0.56","text": "'Then My Old Kentucky Home, good night!;" },
+                    { "end": "0.63","start": "0.56","text": "Chorus" },
+                      { "end": "1.32","start": "0.63","text": "Weep no more my lady
+Oh weep no more today;
+We will sing one song
+For My Old Kentucky Home
+For My Old Kentucky Home, far away" },
+                ];
+            createSubtitle();
 
-<script>
+            function createSubtitle()
+            {
+                var element;
+                for (var i = 0; i < syncData.length; i++) {
+                    element = doc.createElement('span');
+                    element.setAttribute("id", "c_" + i);
+                    element.innerText = syncData[i].text + " ";
+                    subtitles.appendChild(element);
+                }
+            }
 
-stanza1 = "<p>The sun shines bright in My Old Kentucky Home,<br>'Tis summer, the people are gay;<br>The corn-top's ripe and the meadow's in the bloom<br> While the birds make music all the day.</p>";
-
-stanza2 = "<p>The young folks roll on the little cabin floor,<br> All merry, all happy and bright;<br> By 'n' by hard times comes a knocking at the door,<br> Then My Old Kentucky Home, good night!</p>";
-
-chorus = "<p>Weep no more my lady<br> Oh weep no more today;<br> We will sing one song<br> For My Old Kentucky Home <br> For My Old Kentucky Home, far away</p>";
-
-stanzas = [stanza1, stanza2, chorus];
-
-document.addEventListener("DOMContentLoaded", function(){
-
-	var video = document.getElementById("music_video");
-
-	video.addEventListener("play", function(){ //listen for playback event
-		annotate_video(video); //call function to annotate video
-	});
-});
-
-function annotate_video(vid) {
-
-	var body = document.body;
-	var title = document.getElementById("title");
-
-	var background_div = document.createElement("div");
-	background_div.className = "background-img";
-
-	var lyrics = document.getElementById("lyrics");
-
-	var img1_inserted = false;
-	var img1_class = " meadow_sunrise";
-	var img2_inserted = false;
-	var img2_class = " farm";
-	var img3_inserted = false;
-	var img3_class = " meadow_dusk";
-
-	vid.addEventListener("timeupdate", function(){
-		if(vid.currentTime > 63) {
-			if(!img3_inserted) {
-				img3_inserted = insertImg(img3_class);
-				lyrics.innerHTML = "<div class='stanza'>" + stanzas[2]; + "</div>";
-			}
-		}
-		else if(vid.currentTime > 36) {
-			if(!img2_inserted) {
-				img2_inserted = insertImg(img2_class);
-				lyrics.innerHTML = "<div class='stanza'>" + stanzas[1]; + "</div>";
-			}
-
-		}
-		else if(vid.currentTime > 8) {
-			if(!img1_inserted) {
-				img1_inserted = insertImg(img1_class);
-				lyrics.innerHTML = "<div class='stanza'>" + stanzas[0] + "</div>";
-			}
-		}
-
-	});
-
-	vid.addEventListener("ended", function(){
-		clearBackgroundAtEnd(); //remove background image
-		lyrics.innerHTML = ""; //remove lyrics
-	});
-
-	function insertImg(img_class) {
-
-		background_div.className += img_class;
-		body.insertBefore(background_div, title); //insert background div after open body tag
-
-		return true;
-	}
-
-	function clearBackgroundAtEnd() {
-		background_div.className = "";
-	}
-
-
-
-}
-</script>
+            audioPlayer.addEventListener("timeupdate", function(e){
+                syncData.forEach(function(element, index, array){
+                    if( audioPlayer.currentTime >= element.start && audioPlayer.currentTime <= element.end )
+                        subtitles.children[index].style.background = 'pink';
+                });
+            });
+        }(window, document));
+        </script>
+    
 </body>
 </html>	
